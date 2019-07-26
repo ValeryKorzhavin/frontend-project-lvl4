@@ -1,25 +1,21 @@
 import React from 'react';
 import connect from '../connect';
 import NewMessageForm from './NewMessageForm';
-import NewChannelForm from './NewChannelForm';
 import Messages from './Messages';
 import { Field, reduxForm } from 'redux-form';
 import Channels from './Channels';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import * as actions from '../actions';
-import NewChannelModal from './modals/NewChannelModal';
-import DeleteChannelModal from './modals/DeleteChannelModal';
-import RenameChannelModal from './modals/RenameChannelModal';
-import InfoModal from './modals/InfoModal';
-import CancelModal from './modals/CancelModal';
 import { channelsSelector, messagesSelector } from '../selectors';
+
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const mapStateToProps = (state) => {
 	const props = {
     channels: channelsSelector(state),
     messages: messagesSelector(state),
     currentChannelId: state.currentChannelId,
-    сhannelModal: state.сhannelModal,
 	};
 	return props;
 };
@@ -27,15 +23,58 @@ const mapStateToProps = (state) => {
 @connect(mapStateToProps)
 export default class App extends React.Component {
 
-  handleAddChannel = () => {
-    const { showModal, createChannel } = this.props;
-    showModal({ addChannel: true });
+  handleAddChannel = () => {   
+    const { createChannel } = this.props;
+    // const MySwal = withReactContent(Swal);
+    
+
+    Swal.fire({
+      title: 'Create new channel',
+      input: 'text',
+      inputAttributes: {
+        autocapitalize: 'off'
+      },
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to write something!'
+        }
+      },
+      inputPlaceholder: 'Enter channel name',
+      showCancelButton: true,
+      confirmButtonText: 'OK',
+      showLoaderOnConfirm: true,
+      preConfirm: (channel) => {
+        return createChannel(channel)
+          .then(response => {
+            if (!response.data) {
+              throw new Error(response.statusText);
+            }
+            return response.data;
+          })
+          .catch(error => {
+            Swal.showValidationMessage(
+              `Request failed: ${error}`
+            )
+          })
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    }).then(({ value: { data: { attributes: { name } = 0 } = 0 } = 0 }) => {
+      if (name) {
+        Swal.fire({
+          position: 'center',
+          type: 'success',
+          title: `Channel "${name}" has been created`,
+          showConfirmButton: false,
+          timer: 1000
+        });
+      }
+    });
+
+
   };
 
 
   render() {
-    const { сhannelModal: { addChannel, deleteChannel, renameChannel } } = this.props;
-
     return (
       <div className="container" style={{ height: "90vh" }}>
         <div className="row h-100">
@@ -52,12 +91,6 @@ export default class App extends React.Component {
             <NewMessageForm />
           </div>
         </div>
-
-        <NewChannelModal />
-        <DeleteChannelModal />
-        <RenameChannelModal />
-        <InfoModal />
-        <CancelModal />
       </div>      
     );
   }

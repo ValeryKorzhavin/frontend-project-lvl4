@@ -18,9 +18,6 @@ export const updateChannel = createAction('CHANNEL_UPDATE');
 export const removeChannel = createAction('CHANNEL_REMOVE');
 export const changeCurrentChannel = createAction('CURRENT_CHANNEL_CHANGE');
 
-export const showModal = createAction("MODAL_SHOW");
-export const hideModal = createAction("MODAL_HIDE");
-
 export const createUser = createAction('USER_CREATE');
 
 export const sendMessage = ({ author, message, time }, channelId) => async (dispatch) => {
@@ -41,6 +38,7 @@ export const createChannel = name => async (dispatch) => {
     console.log(url);
     const response = await axios.post(url, { data: { attributes: { name } } });
     dispatch(createChannelSuccess());
+    return response;
   } catch (e) {
     dispatch(createChannelFailure());
     throw e;
@@ -54,6 +52,7 @@ export const renameChannel = (id, name) => async (dispatch) => {
     // console.log(url);
     const response = await axios.patch(url, { data: { attributes: { name } } });
     // dispatch(createChannelSuccess());
+    return response;
   } catch (e) {
     // dispatch(createChannelFailure());
     throw e;
@@ -61,14 +60,14 @@ export const renameChannel = (id, name) => async (dispatch) => {
 };
 
 export const deleteChannel = id => async (dispatch) => {
-  // dispatch(createChannelRequest());
+  dispatch(createChannelRequest());
   try {
     const url = routes.channelUrl(id); 
-    // console.log(url);
-    await axios.delete(url);
-    // dispatch(createChannelSuccess());
+    const response = await axios.delete(url);
+    dispatch(createChannelSuccess());
+    return response;
   } catch (e) {
-    // dispatch(createChannelFailure());
+    dispatch(createChannelFailure());
     throw e;
   }
 };

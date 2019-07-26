@@ -12,8 +12,6 @@ const channels = handleActions({
     return omit(state, channel);
   },
   [actions.updateChannel](state, { payload: channel }) {
-    // обработать обшибки приходящие от сервера
-    // не давать в интерфейсе менять каналы general
     return { ...state, [channel.id]: channel };
   },
 }, {});
@@ -30,18 +28,7 @@ const currentChannelId = handleActions({
   },
 }, {});
 
-const сhannelModal = handleActions({
-  [actions.showModal](state, { payload: channel }) {
-    return { ...state, ...channel };
-  },
-  [actions.hideModal](state, { payload: channel }) {
-    return { ...state, ...channel };
-  },
-}, { addChannel: false, deleteChannel: false, renameChannel: false, info: false, cancel: false });
-
-
 export default combineReducers({
-  сhannelModal,
   channels,
   messages,
   currentChannelId,
