@@ -6,7 +6,6 @@ import { createHash } from 'crypto';
 const mapStateToProps = state => {
   const props = {
     messages: messagesSelector(state),
-    // user: state.user,
   };
   return props;
 }

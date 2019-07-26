@@ -26,7 +26,6 @@ export default class App extends React.Component {
   handleAddChannel = () => {   
     const { createChannel } = this.props;
     // const MySwal = withReactContent(Swal);
-    
 
     Swal.fire({
       title: 'Create new channel',
@@ -69,10 +68,7 @@ export default class App extends React.Component {
         });
       }
     });
-
-
   };
-
 
   render() {
     return (

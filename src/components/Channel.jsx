@@ -91,7 +91,7 @@ export default class Channel extends React.Component {
   };  
 
   render() {
-    const { id, name, removable } = this.props.channel;
+    const { channel: { id, name, removable } } = this.props;
 
     return (
       <Nav.Item>
@@ -101,7 +101,7 @@ export default class Channel extends React.Component {
               {name}
             </Col>
             <Col md="auto">
-              {removable ? <FontAwesomeIcon icon={faTimesCircle} onClick={this.deleteChannel} className="mr-2" /> : null}
+              {removable && <FontAwesomeIcon icon={faTimesCircle} onClick={this.deleteChannel} className="mr-2" />}
               <FontAwesomeIcon icon={faEdit} onClick={this.renameChannel} />  
             </Col>
           </Row>
