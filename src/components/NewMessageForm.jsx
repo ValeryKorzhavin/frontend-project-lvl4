@@ -23,19 +23,19 @@ export default class NewMessageForm extends React.Component {
     const { message } =  values;
     const { sendMessage, currentChannelId, reset } = this.props;
     const author = this.context; 
-    sendMessage({ author, message }, currentChannelId);
+    const date = new Date();
+    const time = date.toLocaleString([], { hour: 'numeric', minute: 'numeric', hour12: true });
+    sendMessage({ author, message, time }, currentChannelId);
     reset();
   };
-
-
 
   render() {
     const { handleSubmit, submitting } = this.props;
 
     return (
       <form className="form-inline" onSubmit={handleSubmit(this.handleAddMessage)}>
-        <Field required component="input" type="text" name="message" className="" />
-        <input type="submit" value="send message" className="btn btn-primary ml-3" />
+        <Field required component="input" type="text" name="message" className="form-control mr-sm-2 col" />
+        <input type="submit" value="send message" className="btn btn-primary" />
       </form>
     );
   }

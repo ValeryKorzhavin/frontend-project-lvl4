@@ -23,11 +23,14 @@ const devtoolMiddleware = ext && ext();
 const store = createStore(
   reducers,
   {
-    channels: gon.channels,
-    messages: gon.messages,
+    // channels: gon.channels,
+    // messages: gon.messages,
     currentChannelId: gon.currentChannelId,
     // channels: keyBy(gon.channels, channel => channel.id),
     // messages: keyBy(gon.messages, message => message.id),
+    messages: keyBy(gon.messages, 'id'),
+    channels: keyBy(gon.channels, 'id'),
+    // addChannelModal: { addChannel: false },
   },
   typeof devtoolMiddleware === 'undefined'
   ? compose(applyMiddleware(thunk))
@@ -41,14 +44,20 @@ if (!cookies.get('user_name')) {
   cookies.set('user_name', faker.name.findName());
 }
 
-// const UserContext = React.createContext(cookies.get('user_name'));
-
-// store.dispatch(actions.createUser(cookies.get('user_name')));
-
 const socket = io();
-socket.on('newMessage', ({ data: { attributes } }) => {
-  store.dispatch(actions.addMessage(attributes));
-});
+socket
+  .on('newMessage', ({ data: { attributes } }) => {
+    store.dispatch(actions.addMessage(attributes));
+  })
+  .on('newChannel', ({ data: { attributes } }) => {
+    store.dispatch(actions.addChannel(attributes));
+  })
+  .on('removeChannel', ({ data: { id } }) => {
+    store.dispatch(actions.removeChannel(id));
+  })
+  .on('renameChannel', ({ data: { attributes } }) => {
+    store.dispatch(actions.updateChannel(attributes));
+  });
 
 render(
   <Provider store={store}>
