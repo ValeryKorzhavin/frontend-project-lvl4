@@ -2,7 +2,6 @@ import axios from 'axios';
 import { createAction } from 'redux-actions';
 import routes from '../routes';
 
-
 export const addChannel = createAction('CHANNEL_ADD');
 export const addMessage = createAction('MESSAGE_ADD');
 export const createUser = createAction('USER_CREATE');
@@ -22,8 +21,7 @@ export const sendMessage = ({ author, message, time }, channelId) => async (disp
 export const createChannel = name => async (dispatch) => {
   try {
     const url = routes.channelsUrl(); 
-    const response = await axios.post(url, { data: { attributes: { name } } });
-    return response;
+    return await axios.post(url, { data: { attributes: { name } } });
   } catch (e) {
     throw e;
   }
@@ -32,8 +30,7 @@ export const createChannel = name => async (dispatch) => {
 export const renameChannel = (id, name) => async (dispatch) => {
   try {
     const url = routes.channelUrl(id); 
-    const response = await axios.patch(url, { data: { attributes: { name } } });
-    return response;
+    return await axios.patch(url, { data: { attributes: { name } } });
   } catch (e) {
     throw e;
   }
@@ -42,8 +39,7 @@ export const renameChannel = (id, name) => async (dispatch) => {
 export const deleteChannel = id => async (dispatch) => {
   try {
     const url = routes.channelUrl(id); 
-    const response = await axios.delete(url);
-    return response;
+    return await axios.delete(url);
   } catch (e) {
     throw e;
   }

@@ -16,6 +16,8 @@ const mapStateToProps = state => {
   return props;
 };
 
+// переписать модалки под async/await
+//
 @connect(mapStateToProps)
 export default class Channel extends React.Component {
 
@@ -37,7 +39,20 @@ export default class Channel extends React.Component {
       showCancelButton: true,
       confirmButtonText: 'OK',
       showLoaderOnConfirm: true,
-      preConfirm: newName => renameChannel(id, newName).then(console.log),
+      preConfirm: newName => {
+        return renameChannel(id, newName)
+          .then(response => {
+              if (response.status !== 204) {
+                throw new Error(response.statusText);
+              }
+              return newName;
+            })
+            .catch(error => {
+              Swal.showValidationMessage(
+                `Request failed: ${error}`
+              )
+            })
+      },
       allowOutsideClick: () => !Swal.isLoading()
     }).then((result) => {
       if (result.value) {
@@ -70,7 +85,20 @@ export default class Channel extends React.Component {
       cancelButtonText: 'No, cancel!',
       reverseButtons: true,
       showLoaderOnConfirm: true,
-      preConfirm: () => deleteChannel(id),
+      preConfirm: () => {
+        return deleteChannel(id)
+          .then(response => {
+              if (response.status !== 204) {
+                throw new Error(response.statusText);
+              }
+              return name;
+            })
+            .catch(error => {
+              Swal.showValidationMessage(
+                `Request failed: ${error}`
+              )
+            })
+      },
     })
     .then((result) => {
       if (result.value) {

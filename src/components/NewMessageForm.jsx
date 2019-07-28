@@ -54,7 +54,7 @@ export default class NewMessageForm extends React.Component {
           value="send message" 
           className="btn btn-primary" 
         />
-        {error && <div className="ml-3">{error}</div>}
+        {error && <div className="ml-2">{error}</div>}
       </form>
     );
   }
