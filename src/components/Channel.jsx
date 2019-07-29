@@ -1,82 +1,72 @@
 import React from 'react';
-import connect from '../connect';
 import { Nav, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrashAlt, faTimesCircle } from '@fortawesome/free-regular-svg-icons';
+import { faEdit, faTimesCircle } from '@fortawesome/free-regular-svg-icons';
+import sweetAlert from 'sweetalert2';
 import { generalChannelSelector } from '../selectors';
+import connect from '../connect';
 
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-
-
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const props = {
     generalChannel: generalChannelSelector(state),
   };
   return props;
 };
 
-// переписать модалки под async/await
-//
 @connect(mapStateToProps)
-export default class Channel extends React.Component {
+class Channel extends React.Component {
+  renameChannel = async () => {
+    const { channel: { id }, renameChannel } = this.props;
 
-  renameChannel = () => {
-    const { channel: { id, name }, renameChannel } = this.props;
-
-    Swal.fire({
+    const { value } = await sweetAlert.fire({
       title: 'Rename channel',
       input: 'text',
-      inputAttributes: {
-        autocapitalize: 'off'
-      },
-      inputValidator: (value) => {
-        if (!value) {
-          return 'You need to write something!'
+      inputValidator: (inputValue) => {
+        if (!inputValue) {
+          return 'You need to write something!';
         }
+        return '';
       },
       inputPlaceholder: 'Enter new name for the channel',
       showCancelButton: true,
       confirmButtonText: 'OK',
       showLoaderOnConfirm: true,
-      preConfirm: newName => {
-        return renameChannel(id, newName)
-          .then(response => {
-              if (response.status !== 204) {
-                throw new Error(response.statusText);
-              }
-              return newName;
-            })
-            .catch(error => {
-              Swal.showValidationMessage(
-                `Request failed: ${error}`
-              )
-            })
+      preConfirm: async (newName) => {
+        try {
+          const response = await renameChannel(id, newName);
+          if (response.status !== 204) {
+            throw new Error(response.statusText);
+          }
+        } catch (error) {
+          sweetAlert.showValidationMessage(
+            `Request failed: ${error}`,
+          );
+        }
+        return newName;
       },
-      allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-      if (result.value) {
-        Swal.fire({
-          position: 'center',
-          type: 'success',
-          title: `The name has been changed to "${result.value}"`,
-          showConfirmButton: false,
-          timer: 1000
-        });
-      }
+      allowOutsideClick: () => !sweetAlert.isLoading(),
     });
+
+    if (value) {
+      sweetAlert.fire({
+        position: 'center',
+        type: 'success',
+        title: `The name has been changed to "${value}"`,
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    }
   };
 
-  deleteChannel = () => {
-    const { 
-      channel: { id, name }, 
-      deleteChannel, 
-      generalChannel, 
+  deleteChannel = async () => {
+    const {
+      channel: { id, name },
+      deleteChannel,
+      generalChannel,
       changeCurrentChannel,
     } = this.props;
-    
-    
-    Swal.fire({
+
+    const { value, dismiss } = await sweetAlert.fire({
       title: 'Are you sure?',
       text: "You won't be able to recover this channel!",
       type: 'warning',
@@ -85,38 +75,36 @@ export default class Channel extends React.Component {
       cancelButtonText: 'No, cancel!',
       reverseButtons: true,
       showLoaderOnConfirm: true,
-      preConfirm: () => {
-        return deleteChannel(id)
-          .then(response => {
-              if (response.status !== 204) {
-                throw new Error(response.statusText);
-              }
-              return name;
-            })
-            .catch(error => {
-              Swal.showValidationMessage(
-                `Request failed: ${error}`
-              )
-            })
+      preConfirm: async () => {
+        try {
+          const response = await deleteChannel(id);
+          if (response.status !== 204) {
+            throw new Error(response.statusText);
+          }
+        } catch (error) {
+          sweetAlert.showValidationMessage(
+            `Request failed: ${error}`,
+          );
+        }
       },
-    })
-    .then((result) => {
-      if (result.value) {
-        Swal.fire(
-          'Deleted!',
-          `Channel "${name}" has been deleted.`,
-          'success'
-        )
-      changeCurrentChannel(generalChannel.id);  
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire(
-          'Cancelled',
-          `Channel "${name}" is safe :)`,
-          'error'
-        )
-      }
+      allowOutsideClick: () => !sweetAlert.isLoading(),
     });
-  };  
+
+    if (value) {
+      changeCurrentChannel(generalChannel.id);
+      sweetAlert.fire(
+        'Deleted!',
+        `Channel "${name}" has been deleted.`,
+        'success',
+      );
+    } else if (dismiss === sweetAlert.DismissReason.cancel) {
+      sweetAlert.fire(
+        'Cancelled',
+        `Channel "${name}" is safe :)`,
+        'error',
+      );
+    }
+  };
 
   render() {
     const { channel: { id, name, removable } } = this.props;
@@ -130,12 +118,13 @@ export default class Channel extends React.Component {
             </Col>
             <Col md="auto">
               {removable && <FontAwesomeIcon icon={faTimesCircle} onClick={this.deleteChannel} className="mr-2" />}
-              <FontAwesomeIcon icon={faEdit} onClick={this.renameChannel} />  
+              <FontAwesomeIcon icon={faEdit} onClick={this.renameChannel} />
             </Col>
           </Row>
         </Nav.Link>
       </Nav.Item>
     );
   }
+}
 
-};
+export default Channel;

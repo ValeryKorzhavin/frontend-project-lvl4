@@ -8,36 +8,38 @@ import io from 'socket.io-client';
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import App from './components/App';
-import reducers from './reducers';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
+import { keyBy, map } from 'lodash';
 import * as actions from './actions';
-import { keyBy } from 'lodash';
 import UserContext from './context';
+import reducers from './reducers';
+import App from './components/App';
 
+/* eslint-disable no-underscore-dangle */
 const ext = window.__REDUX_DEVTOOLS_EXTENSION__;
 const devtoolMiddleware = ext && ext();
-// const devtoolMiddleware = ext === undefined ? state => state : ext();
+/* eslint-enable */
 
 const store = createStore(
   reducers,
   {
-    // channels: gon.channels,
-    // messages: gon.messages,
     currentChannelId: gon.currentChannelId,
-    // channels: keyBy(gon.channels, channel => channel.id),
-    // messages: keyBy(gon.messages, message => message.id),
-    messages: keyBy(gon.messages, 'id'),
-    channels: keyBy(gon.channels, 'id'),
-    // addChannelModal: { addChannel: false },
+    channels: {
+      byId: keyBy(gon.channels, 'id'),
+      allIds: map(gon.channels, 'id'),
+    },
+    messages: {
+      byId: keyBy(gon.messages, 'id'),
+      allIds: map(gon.messages, 'id'),
+    },
   },
   typeof devtoolMiddleware === 'undefined'
-  ? compose(applyMiddleware(thunk))
-  : compose(
-    applyMiddleware(thunk),
-    devtoolMiddleware,
-  ),
+    ? compose(applyMiddleware(thunk))
+    : compose(
+      applyMiddleware(thunk),
+      devtoolMiddleware,
+    ),
 );
 
 if (!cookies.get('user_name')) {
@@ -65,7 +67,7 @@ render(
       <App />
     </UserContext.Provider>
   </Provider>,
-  document.getElementById('chat')
+  document.getElementById('chat'),
 );
 
 if (process.env.NODE_ENV !== 'production') {

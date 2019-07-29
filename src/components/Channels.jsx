@@ -1,37 +1,40 @@
 import React from 'react';
-import connect from '../connect';
-import { channelsSelector } from '../selectors';
 import { Nav } from 'react-bootstrap';
+import { channelsSelector, getCurrentChannelId } from '../selectors';
 import Channel from './Channel';
+import connect from '../connect';
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const props = {
     channels: channelsSelector(state),
-    currentChannelId: state.currentChannelId,
+    currentChannelId: getCurrentChannelId(state),
   };
   return props;
 };
 
 @connect(mapStateToProps)
-export default class Channels extends React.Component {
-
-  handleChannelClick = channelId => {
-    const { changeCurrentChannel, currentChannelId } = this.props;
+class Channels extends React.Component {
+  handleChannelClick = (channelId) => {
+    const { changeCurrentChannel } = this.props;
     changeCurrentChannel(Number(channelId));
   };
 
   render() {
     const { channels, currentChannelId } = this.props;
 
-    const channelsList = channels.map(channel => {
-      return <Channel key={channel.id} channel={channel} />;
-    });
+    const channelsList = channels.map(channel => <Channel key={channel.id} channel={channel} />);
 
     return (
-       <Nav variant="pills" className="flex-column" activeKey={currentChannelId} onSelect={this.handleChannelClick}>
-         {channelsList}
-       </Nav>
+      <Nav
+        variant="pills"
+        className="flex-column"
+        activeKey={currentChannelId}
+        onSelect={this.handleChannelClick}
+      >
+        {channelsList}
+      </Nav>
     );
   }
+}
 
-};
+export default Channels;
