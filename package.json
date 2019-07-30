@@ -1,11 +1,8 @@
 {
-  "name": "frontend_l4_chat_project",
+  "name": "frontend-project-lvl4",
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
-  "bin": {
-    "hexlet": "dist/bin/hexlet.js"
-  },
   "engines": {
     "node": "9"
   },
@@ -18,9 +15,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:hexlet/frontend_l4_chat_project.git"
+    "url": "git@github.com:ValeryKorzhavin/frontend-project-lvl4.git"
   },
-  "author": "Kirill Mokevnin",
+  "author": "Valery Korzhavin",
   "license": "ISC",
   "bugs": {
     "url": ""
