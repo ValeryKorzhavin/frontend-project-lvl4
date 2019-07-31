@@ -1,12 +1,14 @@
 import React from 'react';
 import { Alert, Button } from 'react-bootstrap';
 import ScrollBars from 'react-custom-scrollbars';
-import sweetAlert from 'sweetalert2';
 import NewMessageForm from './NewMessageForm';
 import Messages from './Messages';
 import Channels from './Channels';
 import connect from '../connect';
 import { messagesSelector, channelsSelector } from '../selectors';
+import CreateChannelModal from './modals/CreateChannelModal';
+import DeleteChannelModal from './modals/DeleteChannelModal';
+import RenameChannelModal from './modals/RenameChannelModal';
 
 const mapStateToProps = (state) => {
   const props = {
@@ -19,46 +21,8 @@ const mapStateToProps = (state) => {
 @connect(mapStateToProps)
 class App extends React.Component {
   handleAddChannel = async () => {
-    const { createChannel } = this.props;
-
-    const { value } = await sweetAlert.fire({
-      title: 'Create new channel',
-      input: 'text',
-      inputValidator: (inputValue) => {
-        if (!inputValue) {
-          return 'You need to write something!';
-        }
-        return '';
-      },
-      inputPlaceholder: 'Enter channel name',
-      showCancelButton: true,
-      confirmButtonText: 'OK',
-      showLoaderOnConfirm: true,
-      preConfirm: channel => createChannel(channel)
-        .then((response) => {
-          if (!response.data) {
-            throw new Error(response.statusText);
-          }
-          return response.data;
-        })
-        .catch((error) => {
-          sweetAlert.showValidationMessage(
-            `Request failed: ${error}`,
-          );
-        }),
-      allowOutsideClick: () => !sweetAlert.isLoading(),
-    });
-
-    if (value) {
-      const { data: { attributes: { name } } } = value;
-      sweetAlert.fire({
-        position: 'center',
-        type: 'success',
-        title: `Channel "${name}" has been created`,
-        showConfirmButton: false,
-        timer: 1000,
-      });
-    }
+    const { showModal } = this.props;
+    showModal({ createChannel: true });
   };
 
   render() {
@@ -84,6 +48,9 @@ class App extends React.Component {
             </ScrollBars>
             <NewMessageForm />
           </div>
+          <CreateChannelModal />
+          <RenameChannelModal />
+          <DeleteChannelModal />
         </div>
       </div>
     );
