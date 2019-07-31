@@ -42,12 +42,9 @@ const messages = handleActions({
     };
   },
   [actions.removeChannel](state, { payload: id }) {
-    const { byId } = state;
-    const restMessages = omitBy(byId, ({ channelId }) => channelId === id);
-    return {
-      byId: restMessages,
-      allIds: map(restMessages, 'id'),
-    };
+    const byId = omitBy(state.byId, ({ channelId }) => channelId === id);
+    const allIds = map(byId, 'id');
+    return { byId, allIds };
   },
 }, {});
 
@@ -57,16 +54,16 @@ const currentChannelId = handleActions({
   },
 }, {});
 
-const changeModalState = handleActions({
-  [actions.showModal](state, { payload: modals }) {
-    return { ...state, ...modals };
+const modals = handleActions({
+  [actions.showModal](state, { payload: modal }) {
+    return { ...state, ...modal };
   },
-}, { createChannel: false, renameChannel: false, removeChannel: false });
+}, { createChannelModal: false, renameChannelModal: false, removeChannelModal: false });
 
 export default combineReducers({
   channels,
   messages,
-  changeModalState,
+  modals,
   currentChannelId,
   form: formReducer,
 });

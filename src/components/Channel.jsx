@@ -16,12 +16,12 @@ const mapStateToProps = (state) => {
 class Channel extends React.Component {
   renameChannel = () => {
     const { showModal } = this.props;
-    showModal({ renameChannel: true });
+    showModal({ renameChannelModal: true });
   };
 
   deleteChannel = () => {
     const { showModal } = this.props;
-    showModal({ removeChannel: true });
+    showModal({ removeChannelModal: true });
   };
 
   render() {

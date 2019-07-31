@@ -6,7 +6,7 @@ import { generalChannelSelector } from '../../selectors';
 
 const mapStateToProps = (state) => {
   const props = {
-    changeModalState: state.changeModalState,
+    modals: state.modals,
     generalChannel: generalChannelSelector(state),
     currentChannelId: state.currentChannelId,
   };
@@ -33,13 +33,13 @@ class DeleteChannelModal extends React.Component {
       throw new SubmissionError({ _error: error.message });
     }
     changeCurrentChannel(generalChannel.id);
-    showModal({ removeChannel: false });
+    showModal({ removeChannelModal: false });
   };
 
   render() {
     const {
       showModal,
-      changeModalState: { removeChannel },
+      modals: { removeChannelModal },
       handleSubmit,
       submitting,
       error,
@@ -47,8 +47,8 @@ class DeleteChannelModal extends React.Component {
 
     return (
       <Modal
-        show={removeChannel}
-        onHide={() => !submitting && showModal({ removeChannel: false })}
+        show={removeChannelModal}
+        onHide={() => !submitting && showModal({ removeChannelModal: false })}
         keyboard={!submitting}
       >
         <Modal.Header closeButton>
@@ -66,7 +66,7 @@ class DeleteChannelModal extends React.Component {
             <Button
               variant="secondary"
               disabled={submitting}
-              onClick={() => showModal({ removeChannel: false })}
+              onClick={() => showModal({ removeChannelModal: false })}
             >
               Cancel
             </Button>

@@ -5,7 +5,7 @@ import connect from '../../connect';
 
 const mapStateToProps = (state) => {
   const props = {
-    changeModalState: state.changeModalState,
+    modals: state.modals,
   };
   return props;
 };
@@ -24,13 +24,13 @@ class CreateChannelModal extends React.Component {
       throw new SubmissionError({ _error: error.message });
     }
     reset();
-    showModal({ createChannel: false });
+    showModal({ createChannelModal: false });
   };
 
   render() {
     const {
       showModal,
-      changeModalState: { createChannel },
+      modals: { createChannelModal },
       submitting,
       error,
       pristine,
@@ -39,8 +39,8 @@ class CreateChannelModal extends React.Component {
 
     return (
       <Modal
-        show={createChannel}
-        onHide={() => !submitting && showModal({ createChannel: false })}
+        show={createChannelModal}
+        onHide={() => !submitting && showModal({ createChannelModal: false })}
         keyboard={!submitting}
       >
         <Modal.Header closeButton>
@@ -69,7 +69,7 @@ class CreateChannelModal extends React.Component {
             <Button
               variant="secondary"
               disabled={submitting}
-              onClick={() => showModal({ createChannel: false })}
+              onClick={() => showModal({ createChannelModal: false })}
             >
               Cancel
             </Button>
