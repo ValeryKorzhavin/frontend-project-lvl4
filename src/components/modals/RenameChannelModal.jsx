@@ -36,12 +36,12 @@ class RenameChannelModal extends React.Component {
 
   render() {
     const {
-      showModal,
-      changeModalState: { renameChannel },
-      submitting,
       error,
       pristine,
+      showModal,
+      submitting,
       handleSubmit,
+      changeModalState: { renameChannel },
     } = this.props;
 
     return (

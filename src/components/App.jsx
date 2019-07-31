@@ -20,7 +20,7 @@ const mapStateToProps = (state) => {
 
 @connect(mapStateToProps)
 class App extends React.Component {
-  handleAddChannel = async () => {
+  handleAddChannel = () => {
     const { showModal } = this.props;
     showModal({ createChannel: true });
   };
