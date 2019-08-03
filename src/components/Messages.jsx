@@ -19,22 +19,19 @@ class Messages extends React.Component {
     }) => {
       const hash = createHash('md5').update(author).digest('hex');
       const avatarSize = 40;
+      const avatar = `https://www.gravatar.com/avatar/${hash}?d=wavatar&s=${avatarSize}`;
 
       return (
         <div className="media mb-2" key={id}>
-          <img
-            src={`https://www.gravatar.com/avatar/${hash}?d=wavatar&s=${avatarSize}`}
-            className="mr-2 rounded"
-            alt="avatar"
-          />
+          <img src={avatar} className="mr-2 rounded" alt="avatar" />
           <div className="media-body">
-            <div className="mt-0">
-              <b>
+            <div>
+              <span className="font-weight-bold">
                 {author}
-              </b>
-              <span className="text-muted" style={{ fontSize: 12 }}>
-                {time}
               </span>
+              <small className="text-muted ml-2 h7">
+                {time}
+              </small>
             </div>
             {message}
           </div>

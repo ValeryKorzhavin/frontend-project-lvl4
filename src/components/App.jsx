@@ -14,6 +14,7 @@ const mapStateToProps = (state) => {
   const props = {
     channels: channelsSelector(state),
     messages: messagesSelector(state),
+    currentChannelId: state.currentChannelId,
   };
   return props;
 };
@@ -26,12 +27,22 @@ class App extends React.Component {
   };
 
   render() {
+    const { currentChannelId, channels } = this.props;
+    const { name } = channels.find(channel => channel.id === currentChannelId);
+
     return (
-      <div className="container" style={{ height: '90vh' }}>
+      <div className="container vh-90">
         <div className="row h-100">
-          <div className="col-md-4 h-100">
-            <Alert variant="secondary">Channels: </Alert>
-            <ScrollBars className="mb-4" style={{ height: '70vh' }}>
+          <div className="col-md-4">
+            <Alert variant="secondary">
+              <span className="mr-2">Channels:</span>
+              {name}
+            </Alert>
+            <ScrollBars
+              className="mb-4"
+              autoHeight
+              autoHeightMin="75vh"
+            >
               <Channels />
             </ScrollBars>
             <Button
@@ -43,7 +54,11 @@ class App extends React.Component {
           </div>
           <div className="col-md-8">
             <Alert variant="secondary">Messages: </Alert>
-            <ScrollBars className="mb-4" style={{ height: '70vh' }}>
+            <ScrollBars
+              className="mb-4"
+              autoHeight
+              autoHeightMin="75vh"
+            >
               <Messages />
             </ScrollBars>
             <NewMessageForm />
