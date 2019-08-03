@@ -5,7 +5,7 @@ import NewMessageForm from './NewMessageForm';
 import Messages from './Messages';
 import Channels from './Channels';
 import connect from '../connect';
-import { messagesSelector, channelsSelector } from '../selectors';
+import { messagesSelector, channelsSelector, generalChannelSelector } from '../selectors';
 import CreateChannelModal from './modals/CreateChannelModal';
 import DeleteChannelModal from './modals/DeleteChannelModal';
 import RenameChannelModal from './modals/RenameChannelModal';
@@ -15,6 +15,7 @@ const mapStateToProps = (state) => {
     channels: channelsSelector(state),
     messages: messagesSelector(state),
     currentChannelId: state.currentChannelId,
+    general: generalChannelSelector(state),
   };
   return props;
 };
@@ -27,8 +28,9 @@ class App extends React.Component {
   };
 
   render() {
-    const { currentChannelId, channels } = this.props;
-    const { name } = channels.find(channel => channel.id === currentChannelId);
+    const { currentChannelId, channels, general } = this.props;
+    const currentChannel = channels.find(channel => channel.id === currentChannelId);
+    const { name } = currentChannel || general;
 
     return (
       <div className="container vh-90">
