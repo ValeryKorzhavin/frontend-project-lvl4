@@ -36,7 +36,7 @@ class App extends React.Component {
           <div className="col-md-4">
             <Alert variant="secondary">
               <span className="mr-2">Channels:</span>
-              {name}
+              <span className="font-weight-bold">{name}</span>
             </Alert>
             <ScrollBars
               className="mb-4"
